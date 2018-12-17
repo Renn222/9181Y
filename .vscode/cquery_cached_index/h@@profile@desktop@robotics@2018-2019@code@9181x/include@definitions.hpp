@@ -1,4 +1,4 @@
-#ifndef _DEFINITIONS_HPP_
+#ifndef _DEFINITIONS_HPP
 #define _DEFINITIONS_HPP
 
 #include "main.h"
