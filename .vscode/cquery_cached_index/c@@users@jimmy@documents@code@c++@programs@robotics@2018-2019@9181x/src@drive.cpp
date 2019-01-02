@@ -91,7 +91,7 @@ void DriveControl::moveRel(int targetDistance, int maxPower)
     lastError = error;
 
     power = (error * kp) + (derivative * kd);
-
+    power = checkIfPowerInConstraints(power, maxPower);
     autoDrive(power, power, 0);
   }
 }
@@ -116,8 +116,7 @@ void DriveControl::pivotRel(int targetDegree, int maxPower)
     lastError = error;
 
     power = (error * kp) + (derivative * kd);
-    power = (power > maxPower && power > 0) ? maxPower : power;
-    power = (power < -maxPower && power < 0) ? -maxPower : power;
+    power = checkIfPowerInConstraints(power, maxPower);
 
     autoDrive(power, -power, 0);
   }

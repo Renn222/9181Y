@@ -21,19 +21,53 @@ namespace ports
 
     driver = new DriveControl(*backLeftDrive, *frontLeftDrive, *frontRightDrive, *backRightDrive);
     driver->setBrakeMode();
+
+    autoCounter = 0;
   }
 }
 
 using namespace ports;
 
-void on_center_button()
+void checkAutoSelected()
+{
+  std::string selectedAuto = "";
+  switch(autoCounter)
+  {
+    case -1:
+      selectedAuto = "RED LEFT";
+      break;
+    case 1:
+      selectedAuto = "BLUE RIGHT";
+      break;
+    default:
+      selectedAuto = "NONE. \nThe Current Number is: " + std::to_string(autoCounter);
+      break;
+  }
+
+  pros::lcd::set_text(3, "Current Selection: " + selectedAuto);
+}
+
+void on_left_button()
 {
 	static bool pressed = false;
 	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
+	if (pressed)
+  {
+    autoCounter--;
+
+    checkAutoSelected();
+	}
+}
+
+void on_right_button()
+{
+  static bool pressed = false;
+	pressed = !pressed;
+	if (pressed)
+  {
+    autoCounter++;
+
+    checkAutoSelected();
 	}
 }
 
@@ -47,9 +81,10 @@ void initialize()
 {
   init();
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
+	pros::lcd::set_text(1, "SELECT AUTONOMOUS PROGRAM");
 
-	pros::lcd::register_btn1_cb(on_center_button);
+  pros::lcd::register_btn0_cb(on_left_button);
+  pros::lcd::register_btn2_cb(on_right_button);
 }
 
 /**
@@ -100,6 +135,9 @@ void opcontrol()
 {
 	while (true)
   {
+		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
+		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
     driver->opDrive();
 
     if (controllerMain->get_digital(BUTTON_R2))
