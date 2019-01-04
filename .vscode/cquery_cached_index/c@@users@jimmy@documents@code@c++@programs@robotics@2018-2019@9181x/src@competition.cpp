@@ -19,6 +19,7 @@ namespace ports
 
     gyro = new pros::ADIGyro(21);
 
+    initializer = new InitControl();
     driver = new DriveControl(*backLeftDrive, *frontLeftDrive, *frontRightDrive, *backRightDrive);
     driver->setBrakeMode();
 
@@ -27,49 +28,6 @@ namespace ports
 }
 
 using namespace ports;
-
-void checkAutoSelected()
-{
-  std::string selectedAuto = "";
-  switch(autoCounter)
-  {
-    case -1:
-      selectedAuto = "RED LEFT";
-      break;
-    case 1:
-      selectedAuto = "BLUE RIGHT";
-      break;
-    default:
-      selectedAuto = "NONE. \nThe Current Number is: " + std::to_string(autoCounter);
-      break;
-  }
-
-  pros::lcd::set_text(3, "Current Selection: " + selectedAuto);
-}
-
-void on_left_button()
-{
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed)
-  {
-    autoCounter--;
-
-    checkAutoSelected();
-	}
-}
-
-void on_right_button()
-{
-  static bool pressed = false;
-	pressed = !pressed;
-	if (pressed)
-  {
-    autoCounter++;
-
-    checkAutoSelected();
-	}
-}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -80,11 +38,6 @@ void on_right_button()
 void initialize()
 {
   init();
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "SELECT AUTONOMOUS PROGRAM");
-
-  pros::lcd::register_btn0_cb(on_left_button);
-  pros::lcd::register_btn2_cb(on_right_button);
 }
 
 /**
@@ -103,7 +56,9 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+  initializer->startAutoSelector();
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task

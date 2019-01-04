@@ -8,6 +8,8 @@ DriveControl::DriveControl(pros::Motor backLeftDrive, pros::Motor frontLeftDrive
   addLeftMotor(frontLeftDrive);
   addRightMotor(frontRightDrive);
   addRightMotor(backRightDrive);
+
+  setBrakeMode();
 }
 
 void DriveControl::addLeftMotor(pros::Motor motor)
@@ -30,6 +32,19 @@ void DriveControl::setBrakeMode()
   for(auto & motor : rightMotors)
   {
     motor.set_brake_mode(BRAKE_BRAKE);
+  }
+}
+
+void DriveControl::resetEncoders()
+{
+  for(auto & motor : leftMotors)
+  {
+    motor.tare_position();
+  }
+
+  for(auto & motor : rightMotors)
+  {
+    motor.tare_position();
   }
 }
 
@@ -56,6 +71,7 @@ void DriveControl::autoDrive(int powerLeft, int powerRight, int time)
   {
     motor.move(powerRight);
   }
+
   if(time > 0)
   {
     pros::delay(time);
@@ -66,9 +82,36 @@ void DriveControl::autoDrive(int powerLeft, int powerRight, int time)
 
 int DriveControl::checkIfPowerInConstraints(int power, int maxPower)
 {
-  power = (power > maxPower && power > 0) ? maxPower : power;
-  power = (power < -maxPower && power < 0) ? -maxPower : power;
+  power = (power > maxPower) ? maxPower : power;
+  power = (power < -maxPower) ? -maxPower : power;
   return power;
+}
+
+void DriveControl::driveStraight(int power)
+{
+  double kp = 0;
+
+  int masterSide = 0;
+  int partnerSide = 0;
+  int error  = 1;
+  int lastError = 0;
+
+  int powerLeft = 0;
+  int powerRight = 0;
+
+  while(error != 0)
+  {
+    masterSide = abs(leftMotors[0].get_position());
+    partnerSide = abs(rightMotors[0].get_position());
+
+    error = masterSide - partnerSide;
+
+    powerLeft = (masterSide >= partnerSide) ? power - (error * kp) : power;
+    powerRight = (masterSide >= partnerSide) ? power : power - (error * kp);
+
+    autoDrive(powerLeft, powerRight, 0);
+
+  }
 }
 
 void DriveControl::moveRel(int targetDistance, int maxPower)
@@ -83,6 +126,8 @@ void DriveControl::moveRel(int targetDistance, int maxPower)
 
   int power = 0;
 
+  resetEncoders();
+
   while(error != 0)
   {
     currentDistance = leftMotors[0].get_position();
@@ -92,7 +137,7 @@ void DriveControl::moveRel(int targetDistance, int maxPower)
 
     power = (error * kp) + (derivative * kd);
     power = checkIfPowerInConstraints(power, maxPower);
-    autoDrive(power, power, 0);
+    driveStraight(power);
   }
 }
 
@@ -108,6 +153,8 @@ void DriveControl::pivotRel(int targetDegree, int maxPower)
 
   int power = 0;
 
+  resetEncoders();
+
   while(error != 0)
   {
     currentDegree = gyro->get_value();
@@ -120,4 +167,19 @@ void DriveControl::pivotRel(int targetDegree, int maxPower)
 
     autoDrive(power, -power, 0);
   }
+}
+
+void DriveControl::turn90(bool turnCW, int power)
+{
+  int threshold = 0;
+
+  while(leftMotors[0].get_position() < threshold)
+  {
+    int powerLeft = (turnCW) ? power : -power;
+    int powerRight = (turnCW) ? -power : power;
+
+    autoDrive(powerLeft, powerRight, 0);
+  }
+
+  autoDrive(0, 0, 0);
 }

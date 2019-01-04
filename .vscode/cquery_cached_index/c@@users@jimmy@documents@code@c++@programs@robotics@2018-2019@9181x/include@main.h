@@ -77,6 +77,7 @@ void opcontrol(void);
  */
 #include "definitions.hpp"
 #include "drive.hpp"
+#include "init.hpp"
 #include "competition.hpp"
 //#include <iostream>
 #endif
