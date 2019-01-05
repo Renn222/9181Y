@@ -116,6 +116,7 @@ void DriveControl::driveStraight(int power)
 
 void DriveControl::moveRel(int targetDistance, int maxPower)
 {
+  targetDistance = targetDistance/wheelCircumference * 360;
   double kp = 0;
   double kd = 0;
 

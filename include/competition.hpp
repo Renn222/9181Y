@@ -21,6 +21,7 @@ namespace ports
   static pros::ADIGyro * gyro;
 
   static InitControl * initializer;
+  static AutoControl * autoRunner;
   static DriveControl * driver;
 
   static int autoCounter;

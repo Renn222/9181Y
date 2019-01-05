@@ -5,12 +5,14 @@
 
 class InitControl
 {
+  int autoCounter = 0;
+  
 public:
   explicit InitControl();
   void startAutoSelector();
-  static void checkAutoSelected();
-  static void on_left_button();
-  static void on_right_button();
-  void getSelectedAuto();
+  void checkAutoSelected();
+  void on_left_button();
+  void on_right_button();
+  int getSelectedAuto();
 };
 #endif
