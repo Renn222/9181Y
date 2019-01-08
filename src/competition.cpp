@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 namespace ports
 {
   void init()
@@ -49,14 +50,10 @@ void checkAutoSelected()
 
 void on_left_button()
 {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed)
-  {
-    autoCounter--;
+  autoCounter--;
 
-    checkAutoSelected();
-	}
+  checkAutoSelected();
+
 }
 
 void on_centre_button()
@@ -71,14 +68,8 @@ void on_centre_button()
 
 void on_right_button()
 {
-  static bool pressed = false;
-	pressed = !pressed;
-	if (pressed)
-  {
-    autoCounter++;
-
-    checkAutoSelected();
-	}
+  autoCounter++;
+  checkAutoSelected();
 }
 
 /**
@@ -89,7 +80,14 @@ void on_right_button()
  */
 void initialize()
 {
+  pros::lcd::initialize();
   init();
+
+  pros::lcd::register_btn0_cb(on_left_button);
+  pros::lcd::register_btn1_cb(on_centre_button);
+  pros::lcd::register_btn2_cb(on_right_button);
+
+  pros::lcd::set_text(3, "Current Selection: " + autoCounter);
 }
 
 /**
@@ -110,9 +108,7 @@ void disabled() {}
  */
 void competition_initialize()
 {
-  pros::lcd::register_btn0_cb(on_left_button);
-  pros::lcd::register_btn1_cb(on_centre_button);
-  pros::lcd::register_btn2_cb(on_right_button);
+
 }
 
 /**
@@ -147,10 +143,7 @@ void opcontrol()
 {
 	while (true)
   {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-    driver->opDrive();
+    //driver->opDrive();
 
     if (controllerMain->get_digital(BUTTON_R2))
     {
