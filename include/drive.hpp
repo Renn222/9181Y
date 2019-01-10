@@ -8,7 +8,7 @@ class DriveControl
 {
   std::vector<pros::Motor> leftMotors;
   std::vector<pros::Motor> rightMotors;
-  
+
   double wheelDiameter = 4; //in inches
   double wheelCircumference = PI * wheelDiameter;
 
@@ -19,7 +19,7 @@ public:
   void addRightMotor(pros::Motor motor);
   void setBrakeMode();
   void resetEncoders();
-  //void opDrive();
+  void opDrive();
   void autoDrive(int powerLeft, int powerRight, int time);
   int checkIfPowerInConstraints(int power, int maxPower);
   void driveStraight(int power);

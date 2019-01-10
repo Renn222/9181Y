@@ -48,7 +48,7 @@ void DriveControl::resetEncoders()
   }
 }
 
-/*void DriveControl::opDrive()
+void DriveControl::opDrive()
 {
   for(auto & motor : leftMotors)
   {
@@ -59,7 +59,7 @@ void DriveControl::resetEncoders()
   {
     motor.move(ports::controllerMain->get_analog(STICK_LEFT_Y) - ports::controllerMain->get_analog(STICK_LEFT_X));
   }
-}*/
+}
 
 void DriveControl::autoDrive(int powerLeft, int powerRight, int time)
 {

@@ -7,7 +7,7 @@ class AutoControl
 {
   int selectedAuto;
 public:
-  explicit AutoControl();
+  explicit AutoControl(const DriveControl driver);
   void setSelectedAuto(int autoSelected);
   void startAuto();
 };

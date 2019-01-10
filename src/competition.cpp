@@ -22,6 +22,7 @@ namespace ports
 
     driver = new DriveControl(*backLeftDrive, *frontLeftDrive, *frontRightDrive, *backRightDrive);
     driver->setBrakeMode();
+    autoRunner = new AutoControl(*driver);
 
     leftMotors = driver->getLeftMotors();
     rightMotors = driver->getRightMotors();
@@ -66,7 +67,6 @@ void on_centre_button()
 	if (pressed)
   {
     pros::lcd::set_text(1, "AUTO SELECTED");
-    autoRunner = new AutoControl();
 	}
 }
 
@@ -145,14 +145,15 @@ void opcontrol()
 {
   while (true)
   {
-    for(auto & motor : leftMotors)
+    driver->opDrive();
+    /*for(auto & motor : leftMotors)
     {
       motor.move(controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X));
     }
     for(auto & motor : rightMotors)
     {
       motor.move(controllerMain->get_analog(STICK_LEFT_Y) - controllerMain->get_analog(STICK_LEFT_X));
-    }
+    }*/
 
     if (controllerMain->get_digital(BUTTON_R2))
     {
