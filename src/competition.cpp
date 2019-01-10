@@ -11,8 +11,8 @@ namespace ports
     backLeftDrive = new pros::Motor(11, GEARSET_200, FWD, ENCODER_DEGREES);
     frontLeftDrive = new pros::Motor(12, GEARSET_200, FWD, ENCODER_DEGREES);
     intakeMotor = new pros::Motor(13, GEARSET_200, REV, ENCODER_DEGREES);
-    frontLauncherMotor = new pros::Motor(14, GEARSET_200, REV, ENCODER_DEGREES);
-    backLauncherMotor = new pros::Motor(15, GEARSET_200, FWD, ENCODER_DEGREES);
+    frontLauncherMotor = new pros::Motor(14, GEARSET_200, FWD, ENCODER_DEGREES);
+    backLauncherMotor = new pros::Motor(15, GEARSET_200, REV, ENCODER_DEGREES);
 
     liftMotor = new pros::Motor(18, GEARSET_200, FWD, ENCODER_DEGREES);
     frontRightDrive = new pros::Motor(19, GEARSET_200, REV, ENCODER_DEGREES);
@@ -22,6 +22,9 @@ namespace ports
 
     driver = new DriveControl(*backLeftDrive, *frontLeftDrive, *frontRightDrive, *backRightDrive);
     driver->setBrakeMode();
+
+    leftMotors = driver->getLeftMotors();
+    rightMotors = driver->getRightMotors();
 
     autoCounter = 0;
   }
@@ -41,11 +44,12 @@ void checkAutoSelected()
       selectedAuto = "BLUE RIGHT";
       break;
     default:
-      selectedAuto = "NONE. \nThe Current Number is: " + std::to_string(autoCounter);
+      selectedAuto = "NONE";
       break;
   }
 
   pros::lcd::set_text(3, "Current Selection: " + selectedAuto);
+  pros::lcd::set_text(5, "The Current Number is: " + std::to_string(autoCounter));
 }
 
 void on_left_button()
@@ -53,7 +57,6 @@ void on_left_button()
   autoCounter--;
 
   checkAutoSelected();
-
 }
 
 void on_centre_button()
@@ -62,7 +65,8 @@ void on_centre_button()
 	pressed = !pressed;
 	if (pressed)
   {
-    autoRunner = new AutoControl(autoCounter);
+    pros::lcd::set_text(1, "AUTO SELECTED");
+    autoRunner = new AutoControl();
 	}
 }
 
@@ -86,8 +90,6 @@ void initialize()
   pros::lcd::register_btn0_cb(on_left_button);
   pros::lcd::register_btn1_cb(on_centre_button);
   pros::lcd::register_btn2_cb(on_right_button);
-
-  pros::lcd::set_text(3, "Current Selection: " + autoCounter);
 }
 
 /**
@@ -141,9 +143,16 @@ void autonomous()
  */
 void opcontrol()
 {
-	while (true)
+  while (true)
   {
-    //driver->opDrive();
+    for(auto & motor : leftMotors)
+    {
+      motor.move(controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X));
+    }
+    for(auto & motor : rightMotors)
+    {
+      motor.move(controllerMain->get_analog(STICK_LEFT_Y) - controllerMain->get_analog(STICK_LEFT_X));
+    }
 
     if (controllerMain->get_digital(BUTTON_R2))
     {

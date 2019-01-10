@@ -5,8 +5,10 @@
 
 class AutoControl
 {
+  int selectedAuto;
 public:
-  explicit AutoControl(int selectedAuto);
-  void startAuto(int selectedAuto);
+  explicit AutoControl();
+  void setSelectedAuto(int autoSelected);
+  void startAuto();
 };
 #endif

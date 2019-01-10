@@ -25,6 +25,9 @@ namespace ports
 
   static int autoCounter;
 
+  static std::vector<pros::Motor> leftMotors;
+  static std::vector<pros::Motor> rightMotors;
+
   static void init();
 
 }

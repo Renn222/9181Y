@@ -1,11 +1,16 @@
 #include "main.h"
 
-AutoControl::AutoControl(int selectedAuto)
+AutoControl::AutoControl()
 {
 
 }
 
-void AutoControl::startAuto(int selectedAuto)
+void AutoControl::setSelectedAuto(int autoSelected)
+{
+  selectedAuto = autoSelected;
+}
+
+void AutoControl::startAuto()
 {
 
 }

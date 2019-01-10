@@ -48,18 +48,18 @@ void DriveControl::resetEncoders()
   }
 }
 
-void DriveControl::opDrive()
+/*void DriveControl::opDrive()
 {
   for(auto & motor : leftMotors)
   {
-    motor.move(ports::controllerMain->get_analog(STICK_LEFT_Y) + ports::controllerMain->get_analog(STICK_LEFT_X));
+    motor.move(controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X));
   }
 
   for(auto & motor : rightMotors)
   {
     motor.move(ports::controllerMain->get_analog(STICK_LEFT_Y) - ports::controllerMain->get_analog(STICK_LEFT_X));
   }
-}
+}*/
 
 void DriveControl::autoDrive(int powerLeft, int powerRight, int time)
 {
@@ -183,4 +183,14 @@ void DriveControl::turn90(bool turnCW, int power)
   }
 
   autoDrive(0, 0, 0);
+}
+
+std::vector<pros::Motor> DriveControl::getLeftMotors()
+{
+  return leftMotors;
+}
+
+std::vector<pros::Motor> DriveControl::getRightMotors()
+{
+  return rightMotors;
 }
