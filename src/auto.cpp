@@ -1,9 +1,6 @@
 #include "main.h"
 
-AutoControl::AutoControl(const DriveControl driver)
-{
-
-}
+using namespace ports;
 
 void AutoControl::setSelectedAuto(int autoSelected)
 {
@@ -28,5 +25,5 @@ void AutoControl::startAuto()
 void AutoControl::autoFlagSide(bool turnCW)
 {
   driver->moveRel(1000, 127);
-
+  intakeController->powerIntakeRel(150, 127);
 }

@@ -20,7 +20,7 @@ public:
   void setBrakeMode();
   void resetEncoders();
   void opDrive();
-  void autoDrive(int powerLeft, int powerRight, int time);
+  void powerDrive(int powerLeft, int powerRight, int time);
   int checkIfPowerInConstraints(int power, int maxPower);
   void driveStraight(int power);
   void moveRel(int targetDistance, int maxPower);

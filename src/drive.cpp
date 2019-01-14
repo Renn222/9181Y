@@ -61,7 +61,7 @@ void DriveControl::opDrive()
   }
 }
 
-void DriveControl::autoDrive(int powerLeft, int powerRight, int time)
+void DriveControl::powerDrive(int powerLeft, int powerRight, int time)
 {
   for(auto & motor : leftMotors)
   {
@@ -76,7 +76,7 @@ void DriveControl::autoDrive(int powerLeft, int powerRight, int time)
   {
     pros::delay(time);
 
-    autoDrive(0, 0, 0);
+    powerDrive(0, 0, 0);
   }
 }
 
@@ -109,14 +109,14 @@ void DriveControl::driveStraight(int power)
     powerLeft = (masterSide >= partnerSide) ? power - (error * kp) : power;
     powerRight = (masterSide >= partnerSide) ? power : power - (error * kp);
 
-    autoDrive(powerLeft, powerRight, 0);
+    powerDrive(powerLeft, powerRight, 0);
 
   }
 }
 
 void DriveControl::moveRel(int targetDistance, int maxPower)
 {
-  targetDistance = targetDistance/wheelCircumference * 360;
+  targetDistance = targetDistance/(wheelCircumference * 360);
   double kp = 0;
   double kd = 0;
 
@@ -166,7 +166,7 @@ void DriveControl::pivotRel(int targetDegree, int maxPower)
     power = (error * kp) + (derivative * kd);
     power = checkIfPowerInConstraints(power, maxPower);
 
-    autoDrive(power, -power, 0);
+    powerDrive(power, -power, 0);
   }
 }
 
@@ -179,10 +179,10 @@ void DriveControl::turn90(bool turnCW, int power)
     int powerLeft = (turnCW) ? power : -power;
     int powerRight = (turnCW) ? -power : power;
 
-    autoDrive(powerLeft, powerRight, 0);
+    powerDrive(powerLeft, powerRight, 0);
   }
 
-  autoDrive(0, 0, 0);
+  powerDrive(0, 0, 0);
 }
 
 std::vector<pros::Motor> DriveControl::getLeftMotors()

@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 namespace ports
 {
   void init()
@@ -10,8 +11,8 @@ namespace ports
     backLeftDrive = new pros::Motor(11, GEARSET_200, FWD, ENCODER_DEGREES);
     frontLeftDrive = new pros::Motor(12, GEARSET_200, FWD, ENCODER_DEGREES);
     intakeMotor = new pros::Motor(13, GEARSET_200, REV, ENCODER_DEGREES);
-    frontLauncherMotor = new pros::Motor(14, GEARSET_200, REV, ENCODER_DEGREES);
-    backLauncherMotor = new pros::Motor(15, GEARSET_200, FWD, ENCODER_DEGREES);
+    frontLauncherMotor = new pros::Motor(14, GEARSET_200, FWD, ENCODER_DEGREES);
+    backLauncherMotor = new pros::Motor(15, GEARSET_200, REV, ENCODER_DEGREES);
 
     liftMotor = new pros::Motor(18, GEARSET_200, FWD, ENCODER_DEGREES);
     frontRightDrive = new pros::Motor(19, GEARSET_200, REV, ENCODER_DEGREES);
@@ -21,6 +22,12 @@ namespace ports
 
     driver = new DriveControl(*backLeftDrive, *frontLeftDrive, *frontRightDrive, *backRightDrive);
     driver->setBrakeMode();
+    intakeController = new IntakeControl(*intakeMotor, *frontLauncherMotor, *backLauncherMotor, *liftMotor);
+    autoRunner = new AutoControl();
+
+
+    leftMotors = driver->getLeftMotors();
+    rightMotors = driver->getRightMotors();
 
     autoCounter = 0;
   }
@@ -40,23 +47,19 @@ void checkAutoSelected()
       selectedAuto = "BLUE RIGHT";
       break;
     default:
-      selectedAuto = "NONE. \nThe Current Number is: " + std::to_string(autoCounter);
+      selectedAuto = "NONE";
       break;
   }
 
   pros::lcd::set_text(3, "Current Selection: " + selectedAuto);
+  pros::lcd::set_text(5, "The Current Number is: " + std::to_string(autoCounter));
 }
 
 void on_left_button()
 {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed)
-  {
-    autoCounter--;
+  autoCounter--;
 
-    checkAutoSelected();
-	}
+  checkAutoSelected();
 }
 
 void on_centre_button()
@@ -65,20 +68,14 @@ void on_centre_button()
 	pressed = !pressed;
 	if (pressed)
   {
-    autoRunner = new AutoControl(autoCounter);
+    pros::lcd::set_text(1, "AUTO SELECTED");
 	}
 }
 
 void on_right_button()
 {
-  static bool pressed = false;
-	pressed = !pressed;
-	if (pressed)
-  {
-    autoCounter++;
-
-    checkAutoSelected();
-	}
+  autoCounter++;
+  checkAutoSelected();
 }
 
 /**
@@ -89,7 +86,12 @@ void on_right_button()
  */
 void initialize()
 {
+  pros::lcd::initialize();
   init();
+
+  pros::lcd::register_btn0_cb(on_left_button);
+  pros::lcd::register_btn1_cb(on_centre_button);
+  pros::lcd::register_btn2_cb(on_right_button);
 }
 
 /**
@@ -110,9 +112,7 @@ void disabled() {}
  */
 void competition_initialize()
 {
-  pros::lcd::register_btn0_cb(on_left_button);
-  pros::lcd::register_btn1_cb(on_centre_button);
-  pros::lcd::register_btn2_cb(on_right_button);
+
 }
 
 /**
@@ -145,37 +145,11 @@ void autonomous()
  */
 void opcontrol()
 {
-	while (true)
+  while (true)
   {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
     driver->opDrive();
-
-    if (controllerMain->get_digital(BUTTON_R2))
-    {
-      frontLauncherMotor->move(-127);
-      backLauncherMotor->move(-127);
-      intakeMotor->move(-127);
-    }
-    else if(controllerMain->get_digital(BUTTON_R1))
-        intakeMotor->move(127);
-    else
-        intakeMotor->move(0);
-
-    if (controllerMain->get_digital(BUTTON_L2))
-    {
-      frontLauncherMotor->move(127);
-      backLauncherMotor->move(127);
-    }
-    else
-    {
-      frontLauncherMotor->move(0);
-      backLauncherMotor->move(0);
-    }
-
-    liftMotor->move(controllerMain->get_analog(ANALOG_RIGHT_Y));
-
+    intakeController->powerLauncherAndIntake(127);
+    intakeController->powerLift(127);
 		pros::delay(20);
   }
 }

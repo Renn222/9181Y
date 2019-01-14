@@ -22,6 +22,7 @@ namespace ports
 
   static AutoControl * autoRunner;
   static DriveControl * driver;
+  static IntakeControl * intakeController;
 
   static int autoCounter;
 

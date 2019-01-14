@@ -22,7 +22,9 @@ namespace ports
 
     driver = new DriveControl(*backLeftDrive, *frontLeftDrive, *frontRightDrive, *backRightDrive);
     driver->setBrakeMode();
-    autoRunner = new AutoControl(*driver);
+    intakeController = new IntakeControl(*intakeMotor, *frontLauncherMotor, *backLauncherMotor, *liftMotor);
+    autoRunner = new AutoControl();
+
 
     leftMotors = driver->getLeftMotors();
     rightMotors = driver->getRightMotors();
@@ -146,39 +148,8 @@ void opcontrol()
   while (true)
   {
     driver->opDrive();
-    /*for(auto & motor : leftMotors)
-    {
-      motor.move(controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X));
-    }
-    for(auto & motor : rightMotors)
-    {
-      motor.move(controllerMain->get_analog(STICK_LEFT_Y) - controllerMain->get_analog(STICK_LEFT_X));
-    }*/
-
-    if (controllerMain->get_digital(BUTTON_R2))
-    {
-      frontLauncherMotor->move(-127);
-      backLauncherMotor->move(-127);
-      intakeMotor->move(-127);
-    }
-    else if(controllerMain->get_digital(BUTTON_R1))
-        intakeMotor->move(127);
-    else
-        intakeMotor->move(0);
-
-    if (controllerMain->get_digital(BUTTON_L2))
-    {
-      frontLauncherMotor->move(127);
-      backLauncherMotor->move(127);
-    }
-    else
-    {
-      frontLauncherMotor->move(0);
-      backLauncherMotor->move(0);
-    }
-
-    liftMotor->move(controllerMain->get_analog(ANALOG_RIGHT_Y));
-
+    intakeController->powerLauncherAndIntake(127);
+    intakeController->powerLift(127);
 		pros::delay(20);
   }
 }
