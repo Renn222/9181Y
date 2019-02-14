@@ -78,7 +78,6 @@ void opcontrol(void);
 #include "definitions.hpp"
 #include "intake.hpp"
 #include "drive.hpp"
-#include "auto.hpp"
 #include "competition.hpp"
 //#include <iostream>
 #endif

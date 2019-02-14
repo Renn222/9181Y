@@ -7,7 +7,6 @@ IntakeControl::IntakeControl(pros::Motor intakeMotor, pros::Motor frontLauncherM
   addIntakeMotors(intakeMotor);
   addLauncherMotors(frontLauncherMotor);
   addLauncherMotors(backLauncherMotor);
-  addLiftMotors(liftMotor);
 }
 
 void IntakeControl::addIntakeMotors(pros::Motor motor)
@@ -18,11 +17,6 @@ void IntakeControl::addIntakeMotors(pros::Motor motor)
 void IntakeControl::addLauncherMotors(pros::Motor motor)
 {
   launcherMotors.push_back(motor);
-}
-
-void IntakeControl::addLiftMotors(pros::Motor motor)
-{
-  liftMotors.push_back(motor);
 }
 
 void IntakeControl::powerIntake(int power)

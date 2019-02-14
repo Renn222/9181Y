@@ -22,8 +22,7 @@ namespace ports
 
     driver = new DriveControl(*backLeftDrive, *frontLeftDrive, *frontRightDrive, *backRightDrive);
     driver->setBrakeMode();
-    intakeController = new IntakeControl(*intakeMotor, *frontLauncherMotor, *backLauncherMotor, *liftMotor);
-    autoRunner = new AutoControl();
+    intakeControl = new IntakeControl(*intakeMotor, *frontLauncherMotor, *backLauncherMotor, *liftMotor);
 
 
     leftMotors = driver->getLeftMotors();
@@ -126,8 +125,26 @@ void competition_initialize()
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
+ void autoFlagSide(bool turnCW)
+ {
+   driver->moveRel(1000, 127);
+   intakeControl->powerIntakeRel(150, 127);
+ }
+
 void autonomous()
 {
+  switch(autoCounter)
+  {
+    case -1:
+      autoFlagSide(false);
+      break;
+    case 1:
+      autoFlagSide(true);
+      break;
+    default:
+      pros::lcd::set_text(6, "Autonomous was not run");
+  }
 }
 
 /**
@@ -148,8 +165,8 @@ void opcontrol()
   while (true)
   {
     driver->opDrive();
-    intakeController->powerLauncherAndIntake(127);
-    intakeController->powerLift(127);
+    intakeControl->powerLauncherAndIntake(127);
+    intakeControl->powerLift(127);
 		pros::delay(20);
   }
 }

@@ -20,9 +20,8 @@ namespace ports
   static pros::Motor * backRightDrive;
   static pros::ADIGyro * gyro;
 
-  static AutoControl * autoRunner;
   static DriveControl * driver;
-  static IntakeControl * intakeController;
+  static IntakeControl * intakeControl;
 
   static int autoCounter;
 
