@@ -10,6 +10,14 @@ IntakeControl::IntakeControl(pros::Motor intakeMotor, pros::Motor indexerMotor, 
   addLauncherMotors(backLauncherMotor);
 }
 
+void IntakeControl::setBrakeForLauncher()
+{
+  for(auto & motor : launcherMotors)
+  {
+    motor.set_brake_mode(BRAKE_BRAKE);
+  }
+}
+
 void IntakeControl::addIntakeMotors(pros::Motor motor)
 {
   intakeMotors.push_back(motor);

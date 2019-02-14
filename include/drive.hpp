@@ -12,12 +12,16 @@ class DriveControl
   double wheelDiameter = 4; //in inches
   double wheelCircumference = PI * wheelDiameter;
 
+  pros::Controller * controllerMain;
+  pros::Controller * controllerPartner;
+
 public:
 
   explicit DriveControl(pros::Motor backLeftDrive, pros::Motor frontLeftDrive, pros::Motor frontRightDrive, pros::Motor backRightDrive);
   void addLeftMotor(pros::Motor motor);
   void addRightMotor(pros::Motor motor);
   void setBrakeMode();
+  void setControllers(pros::Controller * main, pros::Controller * partner);
   void resetEncoders();
   void opDrive();
   void powerDrive(int powerLeft, int powerRight, int time);

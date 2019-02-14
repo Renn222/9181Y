@@ -11,6 +11,7 @@ class IntakeControl
 
   public:
     explicit IntakeControl(pros::Motor intakeMotor, pros::Motor indexerMotor, pros::Motor frontLauncherMotor, pros::Motor backLauncherMotor, pros::Motor liftMotor);
+    void setBrakeForLauncher();
     void addIntakeMotors(pros::Motor motor);
     void addIndexerMotors(pros::Motor motor);
     void addLauncherMotors(pros::Motor motor);

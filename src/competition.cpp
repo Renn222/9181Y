@@ -26,6 +26,8 @@ namespace ports
     liftControl = new LiftControl(*liftMotor);
 
     driver->setBrakeMode();
+    driver->setControllers(controllerMain, controllerPartner);
+    intakeControl->setBrakeForLauncher();
 
     leftMotors = driver->getLeftMotors();
     rightMotors = driver->getRightMotors();
@@ -169,7 +171,6 @@ void opcontrol()
   while (true)
   {
     driver->opDrive();
-
     if(controllerMain->get_digital(BUTTON_L1))
 		{
       for(int i = 1; i <= 127; i++)

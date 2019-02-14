@@ -35,6 +35,12 @@ void DriveControl::setBrakeMode()
   }
 }
 
+void DriveControl::setControllers(pros::Controller * main, pros::Controller * partner)
+{
+  controllerMain = main;
+  controllerPartner = partner;
+}
+
 void DriveControl::resetEncoders()
 {
   for(auto & motor : leftMotors)
@@ -52,12 +58,12 @@ void DriveControl::opDrive()
 {
   for(auto & motor : leftMotors)
   {
-    motor.move(controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X));
+    motor.move(controllerMain->get_analog(STICK_LEFT_Y) - controllerMain->get_analog(STICK_LEFT_X));
   }
 
   for(auto & motor : rightMotors)
   {
-    motor.move(ports::controllerMain->get_analog(STICK_LEFT_Y) - ports::controllerMain->get_analog(STICK_LEFT_X));
+    motor.move(controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X));
   }
 }
 
