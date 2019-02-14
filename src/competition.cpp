@@ -14,7 +14,7 @@ namespace ports
   	static pros::Motor * frontLauncherMotor = new pros::Motor(14, GEARSET_200, REV, ENCODER_DEGREES);
   	static pros::Motor * backLauncherMotor = new pros::Motor(15, GEARSET_200, FWD, ENCODER_DEGREES);
 
-  	static pros::Motor * indexer = new pros::Motor(6, GEARSET_200, REV, ENCODER_DEGREES);
+  	static pros::Motor * switcher = new pros::Motor(6, GEARSET_200, REV, ENCODER_DEGREES);
   	static pros::Motor * liftMotor = new pros::Motor(18, GEARSET_200, REV, ENCODER_DEGREES);
   	static pros::Motor * frontRightDrive = new pros::Motor(19, GEARSET_200, FWD, ENCODER_DEGREES);
   	static pros::Motor * backRightDrive = new pros::Motor(20, GEARSET_200, FWD, ENCODER_DEGREES);
@@ -22,7 +22,7 @@ namespace ports
     gyro = new pros::ADIGyro(21);
 
     driver = new DriveControl(*backLeftDrive, *frontLeftDrive, *frontRightDrive, *backRightDrive);
-    intakeControl = new IntakeControl(*intakeMotor, *indexer, *frontLauncherMotor, *backLauncherMotor, *liftMotor);
+    intakeControl = new IntakeControl(*intakeMotor, *switcher, *frontLauncherMotor, *backLauncherMotor, *liftMotor);
     liftControl = new LiftControl(*liftMotor);
 
     driver->setBrakeMode();
@@ -130,10 +130,20 @@ void competition_initialize()
  * from where it left off.
  */
 
- void autoFlagSide(bool turnCW)
+ void blueFarSide()
  {
-   driver->moveRel(1000, 127);
-   intakeControl->powerIntakeRel(150, 127);
+   intakeControl->powerSwitcherRel(true);
+   driver->moveRel(35, 100);
+   intakeControl->powerIntakeRel(3000, 100);
+
+   driver->moveRel(-10, 100);
+   driver->pivotRel(90, 100);
+   intakeControl->powerLauncher(127);
+ }
+
+ void redFarSide()
+ {
+
  }
 
 void autonomous()
@@ -141,10 +151,10 @@ void autonomous()
   switch(autoCounter)
   {
     case -1:
-      autoFlagSide(false);
+      redFarSide();
       break;
     case 1:
-      autoFlagSide(true);
+      blueFarSide();
       break;
     default:
       pros::lcd::set_text(6, "Autonomous was not run");
@@ -193,17 +203,8 @@ void opcontrol()
 		{
       intakeControl->powerIntake(-100);
 		}
-		else if(controllerMain->get_digital(BUTTON_A))
-		{
-			intakeControl->powerIndexer(100);
-		}
-		else if(controllerMain->get_digital(BUTTON_B))
-		{
-      intakeControl->powerIndexer(-100);
-		}
 		else
 		{
-      intakeControl->powerIndexer(0);
       intakeControl->powerIntake(0);
 		}
 
