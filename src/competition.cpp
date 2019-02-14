@@ -11,23 +11,21 @@ namespace ports
     static pros::Motor * backLeftDrive = new pros::Motor(9, GEARSET_200, REV, ENCODER_DEGREES);
   	static pros::Motor * frontLeftDrive = new pros::Motor(12, GEARSET_200, REV, ENCODER_DEGREES);
   	static pros::Motor * intakeMotor = new pros::Motor(13, GEARSET_200, REV, ENCODER_DEGREES);
-  	static pros::Motor * frontLauncherMotor = new pros::Motor(14, GEARSET_200, REV, ENCODER_DEGREES);
-  	static pros::Motor * backLauncherMotor = new pros::Motor(15, GEARSET_200, FWD, ENCODER_DEGREES);
+  	static pros::Motor * launcherMotor = new pros::Motor(14, GEARSET_200, REV, ENCODER_DEGREES);
 
   	static pros::Motor * switcher = new pros::Motor(6, GEARSET_200, REV, ENCODER_DEGREES);
   	static pros::Motor * liftMotor = new pros::Motor(18, GEARSET_200, REV, ENCODER_DEGREES);
   	static pros::Motor * frontRightDrive = new pros::Motor(19, GEARSET_200, FWD, ENCODER_DEGREES);
   	static pros::Motor * backRightDrive = new pros::Motor(20, GEARSET_200, FWD, ENCODER_DEGREES);
 
-    gyro = new pros::ADIGyro(21);
-
     driver = new DriveControl(*backLeftDrive, *frontLeftDrive, *frontRightDrive, *backRightDrive);
-    intakeControl = new IntakeControl(*intakeMotor, *switcher, *frontLauncherMotor, *backLauncherMotor, *liftMotor);
+    intakeControl = new IntakeControl(*intakeMotor);
     liftControl = new LiftControl(*liftMotor);
+    launcherControl = new LauncherControl(*launcherMotor, *switcher);
 
-    driver->setBrakeMode();
     driver->setControllers(controllerMain, controllerPartner);
-    intakeControl->setBrakeForLauncher();
+    driver->setBrakeMode();
+    launcherControl->setLauncherBrakeMode();
 
     leftMotors = driver->getLeftMotors();
     rightMotors = driver->getRightMotors();
@@ -132,13 +130,13 @@ void competition_initialize()
 
  void blueFarSide()
  {
-   intakeControl->powerSwitcherRel(true);
-   driver->moveRel(35, 100);
+   launcherControl->setSwitcherPos();
+   driver->movePid(35, 100);
    intakeControl->powerIntakeRel(3000, 100);
 
-   driver->moveRel(-10, 100);
-   driver->pivotRel(90, 100);
-   intakeControl->powerLauncher(127);
+   driver->movePid(-10, 100);
+   driver->turn90(true, 100);
+   launcherControl->powerLauncherRel(360, 127);
  }
 
  void redFarSide()
@@ -181,19 +179,17 @@ void opcontrol()
   while (true)
   {
     driver->opDrive();
-    if(controllerMain->get_digital(BUTTON_L1))
-		{
-      for(int i = 1; i <= 127; i++)
-			{
-				speed++;
-			}
-		}
-		else if(controllerMain->get_digital(BUTTON_L2))
-		{
-			speed = 0;
-		}
 
-		intakeControl->powerLauncher(speed);
+    liftControl->opLift();
+
+    if(controllerMain->get_digital(BUTTON_L1))
+    {
+      launcherControl->powerLauncherRel(360, 127);
+    }
+    else if(controllerMain->get_digital(BUTTON_L2))
+    {
+      launcherControl->setSwitcherPos();
+    }
 
     if(controllerMain->get_digital(BUTTON_R1))
 		{
@@ -203,6 +199,7 @@ void opcontrol()
 		{
       intakeControl->powerIntake(-100);
 		}
+
 		else
 		{
       intakeControl->powerIntake(0);

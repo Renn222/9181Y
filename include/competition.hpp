@@ -18,11 +18,11 @@ namespace ports
   static pros::Motor * liftMotor;
   static pros::Motor * frontRightDrive;
   static pros::Motor * backRightDrive;
-  static pros::ADIGyro * gyro;
 
   static DriveControl * driver;
   static IntakeControl * intakeControl;
   static LiftControl * liftControl;
+  static LauncherControl * launcherControl;
 
   static int autoCounter;
 

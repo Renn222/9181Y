@@ -77,6 +77,7 @@ void opcontrol(void);
  */
 #include "definitions.hpp"
 #include "lift.hpp"
+#include "launcher.hpp"
 #include "intake.hpp"
 #include "drive.hpp"
 #include "competition.hpp"

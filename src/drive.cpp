@@ -105,22 +105,19 @@ void DriveControl::driveStraight(int power)
   int powerLeft = 0;
   int powerRight = 0;
 
-  while(error != 0)
-  {
-    masterSide = abs(leftMotors[0].get_position());
-    partnerSide = abs(rightMotors[0].get_position());
+  masterSide = abs(leftMotors[0].get_position());
+  partnerSide = abs(rightMotors[0].get_position());
 
-    error = masterSide - partnerSide;
+  error = masterSide - partnerSide;
 
-    powerLeft = (masterSide >= partnerSide) ? power - (error * kp) : power;
-    powerRight = (masterSide >= partnerSide) ? power : power - (error * kp);
+  powerLeft = (error > 0) ? power - (error * kp) : power;
+  powerRight = (error > 0) ? power : power - (error * kp);
 
-    powerDrive(powerLeft, powerRight, 0);
+  powerDrive(powerLeft, powerRight, 0);
 
-  }
 }
-
-void DriveControl::moveRel(int targetDistance, int maxPower)
+// targetDistance: -∞ to ∞; maxPower: 0 to 127
+void DriveControl::movePid(int targetDistance, int maxPower)
 {
   targetDistance = targetDistance / wheelCircumference * 360;
   double kp = 0;
@@ -148,34 +145,23 @@ void DriveControl::moveRel(int targetDistance, int maxPower)
   }
 }
 
-void DriveControl::pivotRel(int targetDegree, int maxPower)
+//both parameters must be -ve when going backwards
+void DriveControl::moveRel(int target, int power)
 {
-  double kp = 0;
-  double kd = 0;
+  target = target / wheelCircumference * 360;
 
-  int currentDegree = 0;
-  int error = 1;
-  int derivative = 0;
-  int lastError = 0;
-
-  int power = 0;
-
-  resetEncoders();
-
-  while(error != 0)
+  for(auto & motor : leftMotors)
   {
-    currentDegree = gyro->get_value();
-    error = targetDegree - currentDegree;
-    derivative = error - lastError;
-    lastError = error;
+    motor.move_relative(target, power);
+  }
 
-    power = (error * kp) + (derivative * kd);
-    power = checkIfPowerInConstraints(power, maxPower);
-
-    powerDrive(power, -power, 0);
+  for(auto & motor : rightMotors)
+  {
+    motor.move_relative(target, power);
   }
 }
 
+//power: 0 to 127
 void DriveControl::turn90(bool turnCW, int power)
 {
   int threshold = 0;

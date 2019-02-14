@@ -27,8 +27,8 @@ public:
   void powerDrive(int powerLeft, int powerRight, int time);
   int checkIfPowerInConstraints(int power, int maxPower);
   void driveStraight(int power);
-  void moveRel(int targetDistance, int maxPower);
-  void pivotRel(int targetDegree, int maxPower);
+  void movePid(int targetDistance, int maxPower);
+  void moveRel(int target, int power);
   void turn90(bool turnCW, int power);
   std::vector<pros::Motor> getLeftMotors();
   std::vector<pros::Motor> getRightMotors();
