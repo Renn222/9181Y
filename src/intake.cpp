@@ -2,9 +2,10 @@
 
 using namespace ports;
 
-IntakeControl::IntakeControl(pros::Motor intakeMotor, pros::Motor frontLauncherMotor, pros::Motor backLauncherMotor, pros::Motor liftMotor)
+IntakeControl::IntakeControl(pros::Motor intakeMotor, pros::Motor indexerMotor, pros::Motor frontLauncherMotor, pros::Motor backLauncherMotor, pros::Motor liftMotor)
 {
   addIntakeMotors(intakeMotor);
+  addIndexerMotors(indexerMotor);
   addLauncherMotors(frontLauncherMotor);
   addLauncherMotors(backLauncherMotor);
 }
@@ -12,6 +13,11 @@ IntakeControl::IntakeControl(pros::Motor intakeMotor, pros::Motor frontLauncherM
 void IntakeControl::addIntakeMotors(pros::Motor motor)
 {
   intakeMotors.push_back(motor);
+}
+
+void IntakeControl::addIndexerMotors(pros::Motor motor)
+{
+  indexerMotors.push_back(motor);
 }
 
 void IntakeControl::addLauncherMotors(pros::Motor motor)
@@ -27,6 +33,14 @@ void IntakeControl::powerIntake(int power)
   }
 }
 
+void IntakeControl::powerIndexer(int power)
+{
+  for(auto & motor : indexerMotors)
+  {
+    motor.move(power);
+  }
+}
+
 void IntakeControl::powerLauncher(int power)
 {
   for(auto & motor : launcherMotors)
@@ -35,17 +49,17 @@ void IntakeControl::powerLauncher(int power)
   }
 }
 
-void IntakeControl::powerLauncherAndIntake(int power)
+void IntakeControl::powerLauncherAndIndexer(int power)
 {
   if (controllerMain->get_digital(BUTTON_R2))
   {
     powerLauncher(-power);
-    powerIntake(-power);
+    powerIndexer(-power);
   }
   else if(controllerMain->get_digital(BUTTON_R1))
-    powerIntake(power);
+    powerIndexer(power);
   else
-    powerIntake(0);
+    powerIndexer(0);
 
   if (controllerMain->get_digital(BUTTON_L2))
   {
@@ -57,14 +71,6 @@ void IntakeControl::powerLauncherAndIntake(int power)
   }
 }
 
-void IntakeControl::powerLift(int power)
-{
-  for(auto & motor : liftMotors)
-  {
-    motor.move(power);
-  }
-}
-
 void IntakeControl::powerIntakeRel(int target, int power)
 {
   for(auto & motor : intakeMotors)
@@ -73,17 +79,17 @@ void IntakeControl::powerIntakeRel(int target, int power)
   }
 }
 
-void IntakeControl::powerLauncherRel(int target, int power)
+void IntakeControl::powerIndexerRel(int target, int power)
 {
-  for(auto & motor : launcherMotors)
+  for(auto & motor : indexerMotors)
   {
     motor.move_relative(target, power);
   }
 }
 
-void IntakeControl::powerLiftRel(int target, int power)
+void IntakeControl::powerLauncherRel(int target, int power)
 {
-  for(auto & motor : liftMotors)
+  for(auto & motor : launcherMotors)
   {
     motor.move_relative(target, power);
   }

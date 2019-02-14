@@ -76,6 +76,7 @@ void opcontrol(void);
  * You can add C++-only headers here
  */
 #include "definitions.hpp"
+#include "lift.hpp"
 #include "intake.hpp"
 #include "drive.hpp"
 #include "competition.hpp"
