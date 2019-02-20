@@ -12,9 +12,9 @@ public:
   explicit LauncherControl(pros::Motor launcherMotor, pros::Motor switcherMotor);
   void addSwitcherMotors(pros::Motor motor);
   void addLauncherMotors(pros::Motor motor);
-  void setLauncherBrakeMode();
-  void setSwitcherPos();
-  void powerLauncherRel(int target, int power);
+  void setBrakeMode();
+  void setSwitcherPos(int pos);
+  void shoot(int power);
 };
 
 #endif

@@ -10,6 +10,7 @@ class IntakeControl
   public:
     explicit IntakeControl(pros::Motor intakeMotor);
     void addIntakeMotors(pros::Motor motor);
+    void setBrakeMode();
     void powerIntake(int power);
     void powerIntakeRel(int target, int power);
 };

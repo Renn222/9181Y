@@ -1,5 +1,7 @@
 #include "main.h"
 
+int top = 0;
+int bot = 1;
 
 namespace ports
 {
@@ -8,15 +10,15 @@ namespace ports
     controllerMain = new pros::Controller(CONTROLLER_MAIN);
     controllerPartner = new pros::Controller(CONTROLLER_PARTNER);
 
-    static pros::Motor * backLeftDrive = new pros::Motor(9, GEARSET_200, REV, ENCODER_DEGREES);
-  	static pros::Motor * frontLeftDrive = new pros::Motor(12, GEARSET_200, REV, ENCODER_DEGREES);
-  	static pros::Motor * intakeMotor = new pros::Motor(13, GEARSET_200, REV, ENCODER_DEGREES);
-  	static pros::Motor * launcherMotor = new pros::Motor(14, GEARSET_200, REV, ENCODER_DEGREES);
+    static pros::Motor * backLeftDrive = new pros::Motor(10, GEARSET_200, FWD, ENCODER_DEGREES);
+  	static pros::Motor * frontLeftDrive = new pros::Motor(2, GEARSET_200, FWD, ENCODER_DEGREES);
+  	static pros::Motor * intakeMotor = new pros::Motor(1, GEARSET_200, FWD, ENCODER_DEGREES);
+  	static pros::Motor * launcherMotor = new pros::Motor(7, GEARSET_200, REV, ENCODER_DEGREES);
 
-  	static pros::Motor * switcher = new pros::Motor(6, GEARSET_200, REV, ENCODER_DEGREES);
-  	static pros::Motor * liftMotor = new pros::Motor(18, GEARSET_200, REV, ENCODER_DEGREES);
-  	static pros::Motor * frontRightDrive = new pros::Motor(19, GEARSET_200, FWD, ENCODER_DEGREES);
-  	static pros::Motor * backRightDrive = new pros::Motor(20, GEARSET_200, FWD, ENCODER_DEGREES);
+  	static pros::Motor * switcher = new pros::Motor(8, GEARSET_200, REV, ENCODER_DEGREES);
+  	static pros::Motor * liftMotor = new pros::Motor(4, GEARSET_200, FWD, ENCODER_DEGREES);
+  	static pros::Motor * frontRightDrive = new pros::Motor(3, GEARSET_200, REV, ENCODER_DEGREES);
+  	static pros::Motor * backRightDrive = new pros::Motor(9, GEARSET_200, REV, ENCODER_DEGREES);
 
     driver = new DriveControl(*backLeftDrive, *frontLeftDrive, *frontRightDrive, *backRightDrive);
     intakeControl = new IntakeControl(*intakeMotor);
@@ -24,11 +26,12 @@ namespace ports
     launcherControl = new LauncherControl(*launcherMotor, *switcher);
 
     driver->setControllers(controllerMain, controllerPartner);
-    driver->setBrakeMode();
-    launcherControl->setLauncherBrakeMode();
+    liftControl->setControllers(controllerMain, controllerPartner);
 
-    leftMotors = driver->getLeftMotors();
-    rightMotors = driver->getRightMotors();
+    driver->setBrakeMode();
+    liftControl->setBrakeMode();
+    intakeControl->setBrakeMode();
+    launcherControl->setBrakeMode();
 
     autoCounter = 0;
   }
@@ -130,13 +133,17 @@ void competition_initialize()
 
  void blueFarSide()
  {
-   launcherControl->setSwitcherPos();
+   driver->turnRel(90, 80);
+   pros::delay(1000);
+   driver->turnRel(-90, 80);
+   /*liftControl->powerLiftRel(1200, 127);
+   launcherControl->setSwitcherPos(top);
    driver->movePid(35, 100);
-   intakeControl->powerIntakeRel(3000, 100);
+   intakeControl->powerIntakeRel(1200, 127);
 
    driver->movePid(-10, 100);
-   driver->turn90(true, 100);
-   launcherControl->powerLauncherRel(360, 127);
+   driver->turnRel(90, 100);
+   launcherControl->shoot(127);*/
  }
 
  void redFarSide()
@@ -184,20 +191,22 @@ void opcontrol()
 
     if(controllerMain->get_digital(BUTTON_L1))
     {
-      launcherControl->powerLauncherRel(360, 127);
+      launcherControl->setSwitcherPos(top);
+      launcherControl->shoot(127);
     }
     else if(controllerMain->get_digital(BUTTON_L2))
     {
-      launcherControl->setSwitcherPos();
+      launcherControl->setSwitcherPos(bot);
+      launcherControl->shoot(127);
     }
 
     if(controllerMain->get_digital(BUTTON_R1))
 		{
-			intakeControl->powerIntake(100);
+			intakeControl->powerIntake(127);
 		}
 		else if(controllerMain->get_digital(BUTTON_R2))
 		{
-      intakeControl->powerIntake(-100);
+      intakeControl->powerIntake(-127);
 		}
 
 		else

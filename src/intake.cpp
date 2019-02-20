@@ -12,6 +12,14 @@ void IntakeControl::addIntakeMotors(pros::Motor motor)
   intakeMotors.push_back(motor);
 }
 
+void IntakeControl::setBrakeMode()
+{
+  for(auto & motor : intakeMotors)
+  {
+    motor.set_brake_mode(BRAKE_COAST);
+  }
+}
+
 void IntakeControl::powerIntake(int power)
 {
   for(auto & motor : intakeMotors)

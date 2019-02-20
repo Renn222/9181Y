@@ -18,43 +18,43 @@ void LauncherControl::addLauncherMotors(pros::Motor motor)
   launcherMotors.push_back(motor);
 }
 
-void LauncherControl::setLauncherBrakeMode()
+void LauncherControl::setBrakeMode()
 {
-  for(auto & motor : launcherMotors)
+  for(auto & motor : switcherMotors)
   {
-    motor.set_brake_mode(BRAKE_COAST);
+    motor.set_brake_mode(BRAKE_HOLD);
   }
 }
 
 /*MAKE IS SO THAT THIS WORKS FOR SWITCHING TO CERTAIN VALUES AND THEN
 MAKE SURE THAT EVERYTHING IS MOVE REL WHEN IT NEEDS TO BE AND MOVE
 ABSOLUTE WHEN IT NEEDS TO BE*/
-void LauncherControl::setSwitcherPos()
+void LauncherControl::setSwitcherPos(int pos)
 {
   int target;
   int power;
 
-  if(switcherMotors[0].get_position() < 0)
+  if(pos == 0)
   {
     target = 0;
     power = 127;
   }
   else
   {
-    target = -450;
+    target = -66;
     power = -127;
   }
 
   for(auto & motor : switcherMotors)
   {
-    motor.move_relative(target, power);
+    motor.move_absolute(target, power);
   }
 }
 
-void LauncherControl::powerLauncherRel(int target, int power)
+void LauncherControl::shoot(int power)
 {
   for(auto & motor : launcherMotors)
   {
-    motor.move_relative(target, power);
+    motor.move_relative(1800, power);
   }
 }

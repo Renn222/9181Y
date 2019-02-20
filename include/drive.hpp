@@ -24,12 +24,12 @@ public:
   void setControllers(pros::Controller * main, pros::Controller * partner);
   void resetEncoders();
   void opDrive();
-  void powerDrive(int powerLeft, int powerRight, int time);
+  void powerDriveTime(int powerLeft, int powerRight, int time);
   int checkIfPowerInConstraints(int power, int maxPower);
   void driveStraight(int power);
   void movePid(int targetDistance, int maxPower);
   void moveRel(int target, int power);
-  void turn90(bool turnCW, int power);
+  void turnRel(int degrees, int power);
   std::vector<pros::Motor> getLeftMotors();
   std::vector<pros::Motor> getRightMotors();
 };

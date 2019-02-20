@@ -14,9 +14,10 @@ public:
 
   explicit LiftControl(pros::Motor liftMotor);
   void addLiftMotors(pros::Motor motor);
+  void setBrakeMode();
   void setControllers(pros::Controller * main, pros::Controller * partner);
   void opLift();
-  void powerLift(int power);
+  void powerLiftTime(int power, int time);
   void powerLiftRel(int target, int power);
 };
 #endif

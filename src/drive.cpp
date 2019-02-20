@@ -56,18 +56,33 @@ void DriveControl::resetEncoders()
 
 void DriveControl::opDrive()
 {
-  for(auto & motor : leftMotors)
+  if(abs(controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X)) != controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X) || abs(controllerMain->get_analog(STICK_LEFT_Y) - controllerMain->get_analog(STICK_LEFT_X) != controllerMain->get_analog(STICK_LEFT_Y) - controllerMain->get_analog(STICK_LEFT_X)))
   {
-    motor.move(controllerMain->get_analog(STICK_LEFT_Y) - controllerMain->get_analog(STICK_LEFT_X));
-  }
+    for(auto & motor : leftMotors)
+    {
+      motor.move(0.75 *(controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X)));
+    }
 
-  for(auto & motor : rightMotors)
+    for(auto & motor : rightMotors)
+    {
+      motor.move(0.75 *(controllerMain->get_analog(STICK_LEFT_Y) - controllerMain->get_analog(STICK_LEFT_X)));
+    }
+  }
+  else
   {
-    motor.move(controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X));
+    for(auto & motor : leftMotors)
+    {
+      motor.move(controllerMain->get_analog(STICK_LEFT_Y) + controllerMain->get_analog(STICK_LEFT_X));
+    }
+
+    for(auto & motor : rightMotors)
+    {
+      motor.move(controllerMain->get_analog(STICK_LEFT_Y) - controllerMain->get_analog(STICK_LEFT_X));
+    }
   }
 }
 
-void DriveControl::powerDrive(int powerLeft, int powerRight, int time)
+void DriveControl::powerDriveTime(int powerLeft, int powerRight, int time)
 {
   for(auto & motor : leftMotors)
   {
@@ -82,7 +97,7 @@ void DriveControl::powerDrive(int powerLeft, int powerRight, int time)
   {
     pros::delay(time);
 
-    powerDrive(0, 0, 0);
+    powerDriveTime(0, 0, 0);
   }
 }
 
@@ -113,7 +128,7 @@ void DriveControl::driveStraight(int power)
   powerLeft = (error > 0) ? power - (error * kp) : power;
   powerRight = (error > 0) ? power : power - (error * kp);
 
-  powerDrive(powerLeft, powerRight, 0);
+  powerDriveTime(powerLeft, powerRight, 0);
 
 }
 // targetDistance: -∞ to ∞; maxPower: 0 to 127
@@ -162,20 +177,28 @@ void DriveControl::moveRel(int target, int power)
 }
 
 //power: 0 to 127
-void DriveControl::turn90(bool turnCW, int power)
+void DriveControl::turnRel(int degrees, int power)
 {
-  int threshold = 0;
+  resetEncoders();
+  degrees*=3.2;
 
-  while(leftMotors[0].get_position() < threshold)
+  for(auto & motor : leftMotors)
   {
-    int powerLeft = (turnCW) ? power : -power;
-    int powerRight = (turnCW) ? -power : power;
-
-    powerDrive(powerLeft, powerRight, 0);
+    motor.move_relative(-degrees, -power);
+  }
+  for(auto & motor : rightMotors)
+  {
+    motor.move_relative(degrees, power);
   }
 
-  powerDrive(0, 0, 0);
+  while (!((frontLeftDrive->get_position() < (degrees + 5)) && (frontLeftDrive->get_position() > (degrees - 5)))
+         && !((frontRightDrive->get_position() < (-degrees + 5)) && (frontRightDrive->get_position() > (-degrees - 5))))
+  {
+    pros::delay(2);
+  }
+  powerDriveTime(0, 0, 0);
 }
+
 
 std::vector<pros::Motor> DriveControl::getLeftMotors()
 {
