@@ -82,7 +82,7 @@ void DriveControl::opDrive()
   }
 }
 
-void DriveControl::powerDriveTime(int powerLeft, int powerRight, int time)
+void DriveControl::moveTime(int powerLeft, int powerRight, int time)
 {
   for(auto & motor : leftMotors)
   {
@@ -97,7 +97,7 @@ void DriveControl::powerDriveTime(int powerLeft, int powerRight, int time)
   {
     pros::delay(time);
 
-    powerDriveTime(0, 0, 0);
+    moveTime(0, 0, 0);
   }
 }
 
@@ -128,7 +128,7 @@ void DriveControl::driveStraight(int power)
   powerLeft = (error > 0) ? power - (error * kp) : power;
   powerRight = (error > 0) ? power : power - (error * kp);
 
-  powerDriveTime(powerLeft, powerRight, 0);
+  moveTime(powerLeft, powerRight, 0);
 
 }
 // targetDistance: -∞ to ∞; maxPower: 0 to 127
@@ -180,7 +180,7 @@ void DriveControl::moveRel(int target, int power)
 void DriveControl::turnRel(int degrees, int power)
 {
   resetEncoders();
-  degrees*=3.2;
+  degrees*=3.0;
 
   for(auto & motor : leftMotors)
   {
@@ -191,12 +191,12 @@ void DriveControl::turnRel(int degrees, int power)
     motor.move_relative(degrees, power);
   }
 
-  while (!((frontLeftDrive->get_position() < (degrees + 5)) && (frontLeftDrive->get_position() > (degrees - 5)))
-         && !((frontRightDrive->get_position() < (-degrees + 5)) && (frontRightDrive->get_position() > (-degrees - 5))))
+  while (!((leftMotors[0].get_position() < (degrees + 10)) && (leftMotors[0].get_position() > (degrees - 10)))
+         && !((rightMotors[0].get_position() < (-degrees + 10)) && (rightMotors[0].get_position() > (-degrees - 10))))
   {
     pros::delay(2);
   }
-  powerDriveTime(0, 0, 0);
+  moveTime(0, 0, 0);
 }
 
 

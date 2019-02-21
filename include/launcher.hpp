@@ -14,6 +14,7 @@ public:
   void addLauncherMotors(pros::Motor motor);
   void setBrakeMode();
   void setSwitcherPos(int pos);
+  void moveTime(int power, int time);
   void shoot(int power);
 };
 

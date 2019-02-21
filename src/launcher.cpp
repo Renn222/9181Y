@@ -22,13 +22,10 @@ void LauncherControl::setBrakeMode()
 {
   for(auto & motor : switcherMotors)
   {
-    motor.set_brake_mode(BRAKE_HOLD);
+    motor.set_brake_mode(BRAKE_COAST);
   }
 }
 
-/*MAKE IS SO THAT THIS WORKS FOR SWITCHING TO CERTAIN VALUES AND THEN
-MAKE SURE THAT EVERYTHING IS MOVE REL WHEN IT NEEDS TO BE AND MOVE
-ABSOLUTE WHEN IT NEEDS TO BE*/
 void LauncherControl::setSwitcherPos(int pos)
 {
   int target;
@@ -51,10 +48,25 @@ void LauncherControl::setSwitcherPos(int pos)
   }
 }
 
+void LauncherControl::moveTime(int power, int time)
+{
+  for(auto & motor : launcherMotors)
+  {
+    motor.move(power);
+  }
+
+  if(time > 0)
+  {
+    pros::delay(time);
+
+    moveTime(0, 0);
+  }
+}
+
 void LauncherControl::shoot(int power)
 {
   for(auto & motor : launcherMotors)
   {
-    motor.move_relative(1800, power);
+    motor.move_relative(720, power);
   }
 }

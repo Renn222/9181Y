@@ -13,10 +13,10 @@ namespace ports
     static pros::Motor * backLeftDrive = new pros::Motor(10, GEARSET_200, FWD, ENCODER_DEGREES);
   	static pros::Motor * frontLeftDrive = new pros::Motor(2, GEARSET_200, FWD, ENCODER_DEGREES);
   	static pros::Motor * intakeMotor = new pros::Motor(1, GEARSET_200, FWD, ENCODER_DEGREES);
-  	static pros::Motor * launcherMotor = new pros::Motor(7, GEARSET_200, REV, ENCODER_DEGREES);
+  	static pros::Motor * launcherMotor = new pros::Motor(7, GEARSET_200, FWD, ENCODER_DEGREES);
 
   	static pros::Motor * switcher = new pros::Motor(8, GEARSET_200, REV, ENCODER_DEGREES);
-  	static pros::Motor * liftMotor = new pros::Motor(4, GEARSET_200, FWD, ENCODER_DEGREES);
+  	static pros::Motor * liftMotor = new pros::Motor(4, GEARSET_100, FWD, ENCODER_DEGREES);
   	static pros::Motor * frontRightDrive = new pros::Motor(3, GEARSET_200, REV, ENCODER_DEGREES);
   	static pros::Motor * backRightDrive = new pros::Motor(9, GEARSET_200, REV, ENCODER_DEGREES);
 
@@ -134,7 +134,7 @@ void competition_initialize()
  void blueFarSide()
  {
    driver->turnRel(90, 80);
-   pros::delay(1000);
+   pros::delay(500);
    driver->turnRel(-90, 80);
    /*liftControl->powerLiftRel(1200, 127);
    launcherControl->setSwitcherPos(top);
@@ -187,17 +187,30 @@ void opcontrol()
   {
     driver->opDrive();
 
-    liftControl->opLift();
-
     if(controllerMain->get_digital(BUTTON_L1))
     {
       launcherControl->setSwitcherPos(top);
       launcherControl->shoot(127);
     }
+
     else if(controllerMain->get_digital(BUTTON_L2))
     {
       launcherControl->setSwitcherPos(bot);
       launcherControl->shoot(127);
+
+    }
+    else if(controllerMain->get_digital(BUTTON_B))
+    {
+      launcherControl->moveTime(0, 0);
+    }
+
+    if (controllerMain->get_analog(STICK_LEFT_Y) != 0)
+    {
+      liftControl->opLift();
+    }
+    else if(controllerMain->get_digital(BUTTON_A))
+    {
+      liftControl->moveRel(180, 127);
     }
 
     if(controllerMain->get_digital(BUTTON_R1))

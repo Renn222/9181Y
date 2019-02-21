@@ -24,7 +24,7 @@ public:
   void setControllers(pros::Controller * main, pros::Controller * partner);
   void resetEncoders();
   void opDrive();
-  void powerDriveTime(int powerLeft, int powerRight, int time);
+  void moveTime(int powerLeft, int powerRight, int time);
   int checkIfPowerInConstraints(int power, int maxPower);
   void driveStraight(int power);
   void movePid(int targetDistance, int maxPower);

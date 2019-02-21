@@ -14,7 +14,7 @@ void LiftControl::setBrakeMode()
 {
   for(auto & motor : liftMotors)
   {
-    motor.set_brake_mode(BRAKE_BRAKE);
+    motor.set_brake_mode(BRAKE_HOLD);
   }
 }
 
@@ -32,7 +32,7 @@ void LiftControl::opLift()
   }
 }
 
-void LiftControl::powerLiftTime(int power, int time)
+void LiftControl::moveTime(int power, int time)
 {
   for(auto & motor : liftMotors)
   {
@@ -43,14 +43,22 @@ void LiftControl::powerLiftTime(int power, int time)
   {
     pros::delay(time);
 
-    powerLiftTime(0, 0);
+    moveTime(0, 0);
   }
 }
 
-void LiftControl::powerLiftRel(int target, int power)
+void LiftControl::moveRel(int target, int power)
 {
   for(auto & motor : liftMotors)
   {
     motor.move_relative(target, power);
+  }
+}
+
+void LiftControl::moveAbs(int target, int power)
+{
+  for(auto & motor : liftMotors)
+  {
+    motor.move_absolute(target, power);
   }
 }

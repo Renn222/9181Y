@@ -17,7 +17,8 @@ public:
   void setBrakeMode();
   void setControllers(pros::Controller * main, pros::Controller * partner);
   void opLift();
-  void powerLiftTime(int power, int time);
-  void powerLiftRel(int target, int power);
+  void moveTime(int power, int time);
+  void moveRel(int target, int power);
+  void moveAbs(int target, int power);
 };
 #endif
