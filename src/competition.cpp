@@ -187,6 +187,8 @@ void opcontrol()
   {
     driver->opDrive();
 
+    liftControl->opLift();
+
     if(controllerMain->get_digital(BUTTON_L1))
     {
       launcherControl->setSwitcherPos(top);
@@ -203,14 +205,9 @@ void opcontrol()
     {
       launcherControl->moveTime(0, 0);
     }
-
-    if (controllerMain->get_analog(STICK_LEFT_Y) != 0)
-    {
-      liftControl->opLift();
-    }
     else if(controllerMain->get_digital(BUTTON_A))
     {
-      liftControl->moveRel(180, 127);
+      liftControl->moveTime(127, 200);
     }
 
     if(controllerMain->get_digital(BUTTON_R1))

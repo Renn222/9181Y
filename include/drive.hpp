@@ -30,7 +30,5 @@ public:
   void movePid(int targetDistance, int maxPower);
   void moveRel(int target, int power);
   void turnRel(int degrees, int power);
-  std::vector<pros::Motor> getLeftMotors();
-  std::vector<pros::Motor> getRightMotors();
 };
 #endif
