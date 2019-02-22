@@ -48,6 +48,14 @@ void LauncherControl::setSwitcherPos(int pos)
   }
 }
 
+void LauncherControl::stop()
+{
+  for(auto & motor : switcherMotors)
+  {
+    motor.move(0);
+  }
+}
+
 void LauncherControl::moveTime(int power, int time)
 {
   for(auto & motor : launcherMotors)
@@ -67,6 +75,12 @@ void LauncherControl::shoot(int power)
 {
   for(auto & motor : launcherMotors)
   {
+    motor.tare_position();
     motor.move_relative(720, power);
   }
+}
+
+std::vector<pros::Motor> LauncherControl::getSwitcherMotors()
+{
+  return switcherMotors;
 }

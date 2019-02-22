@@ -14,8 +14,10 @@ public:
   void addLauncherMotors(pros::Motor motor);
   void setBrakeMode();
   void setSwitcherPos(int pos);
+  void stop();
   void moveTime(int power, int time);
   void shoot(int power);
+  std::vector<pros::Motor> getSwitcherMotors();
 };
 
 #endif

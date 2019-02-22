@@ -15,7 +15,7 @@ namespace ports
   	static pros::Motor * intakeMotor = new pros::Motor(1, GEARSET_200, FWD, ENCODER_DEGREES);
   	static pros::Motor * launcherMotor = new pros::Motor(7, GEARSET_200, FWD, ENCODER_DEGREES);
 
-  	static pros::Motor * switcher = new pros::Motor(8, GEARSET_200, REV, ENCODER_DEGREES);
+  	static pros::Motor * switcher = new pros::Motor(8, GEARSET_100, REV, ENCODER_DEGREES);
   	static pros::Motor * liftMotor = new pros::Motor(4, GEARSET_100, FWD, ENCODER_DEGREES);
   	static pros::Motor * frontRightDrive = new pros::Motor(3, GEARSET_200, REV, ENCODER_DEGREES);
   	static pros::Motor * backRightDrive = new pros::Motor(9, GEARSET_200, REV, ENCODER_DEGREES);
@@ -228,6 +228,12 @@ void opcontrol()
 		{
 			autonomous();
 		}
+
+    if (launcherControl->getSwitcherMotors()[0].get_position() - 715 > 0)
+    {
+      launcherControl->stop();
+    }
+
     pros::delay(20);
 	}
 }
