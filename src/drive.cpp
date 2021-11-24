@@ -180,32 +180,22 @@ void DriveControl::moveRel(int target, int power)
 void DriveControl::turnRel(int degrees, int power)
 {
   resetEncoders();
-  degrees*=3.0;
+  degrees*=2.9;
 
   for(auto & motor : leftMotors)
   {
-    motor.move_relative(-degrees, -power);
+    motor.move_relative(degrees, power);
   }
   for(auto & motor : rightMotors)
   {
-    motor.move_relative(degrees, power);
+    motor.move_relative(-degrees, -power);
   }
 
-  while (!((leftMotors[0].get_position() < (degrees + 10)) && (leftMotors[0].get_position() > (degrees - 10)))
-         && !((rightMotors[0].get_position() < (-degrees + 10)) && (rightMotors[0].get_position() > (-degrees - 10))))
+  while (!((leftMotors[0].get_position() < (degrees + 5)) && (leftMotors[0].get_position() > (degrees - 5)))
+         && !((rightMotors[0].get_position() < (-degrees + 5)) && (rightMotors[0].get_position() > (-degrees - 5))))
   {
     pros::delay(2);
   }
+
   moveTime(0, 0, 0);
-}
-
-
-std::vector<pros::Motor> DriveControl::getLeftMotors()
-{
-  return leftMotors;
-}
-
-std::vector<pros::Motor> DriveControl::getRightMotors()
-{
-  return rightMotors;
 }

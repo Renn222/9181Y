@@ -15,7 +15,7 @@ namespace ports
   	static pros::Motor * intakeMotor = new pros::Motor(1, GEARSET_200, FWD, ENCODER_DEGREES);
   	static pros::Motor * launcherMotor = new pros::Motor(7, GEARSET_200, FWD, ENCODER_DEGREES);
 
-  	static pros::Motor * switcher = new pros::Motor(8, GEARSET_200, REV, ENCODER_DEGREES);
+  	static pros::Motor * switcher = new pros::Motor(8, GEARSET_100, REV, ENCODER_DEGREES);
   	static pros::Motor * liftMotor = new pros::Motor(4, GEARSET_100, FWD, ENCODER_DEGREES);
   	static pros::Motor * frontRightDrive = new pros::Motor(3, GEARSET_200, REV, ENCODER_DEGREES);
   	static pros::Motor * backRightDrive = new pros::Motor(9, GEARSET_200, REV, ENCODER_DEGREES);
@@ -187,6 +187,8 @@ void opcontrol()
   {
     driver->opDrive();
 
+    liftControl->opLift();
+
     if(controllerMain->get_digital(BUTTON_L1))
     {
       launcherControl->setSwitcherPos(top);
@@ -203,14 +205,9 @@ void opcontrol()
     {
       launcherControl->moveTime(0, 0);
     }
-
-    if (controllerMain->get_analog(STICK_LEFT_Y) != 0)
-    {
-      liftControl->opLift();
-    }
     else if(controllerMain->get_digital(BUTTON_A))
     {
-      liftControl->moveRel(180, 127);
+      liftControl->moveTime(127, 200);
     }
 
     if(controllerMain->get_digital(BUTTON_R1))
@@ -231,6 +228,12 @@ void opcontrol()
 		{
 			autonomous();
 		}
+
+    if (launcherControl->getSwitcherMotors()[0].get_position() - 715 > 0)
+    {
+      launcherControl->stop();
+    }
+
     pros::delay(20);
 	}
 }
