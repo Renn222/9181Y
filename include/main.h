@@ -39,7 +39,7 @@
 /**
  * You should add more #includes here
  */
-//#include "okapi/api.hpp"
+#include "okapi/api.hpp"
 //#include "pros/api_legacy.h"
 
 /**
@@ -75,6 +75,12 @@ void opcontrol(void);
 /**
  * You can add C++-only headers here
  */
+#include "definitions.hpp"
+#include "lift.hpp"
+#include "launcher.hpp"
+#include "intake.hpp"
+#include "drive.hpp"
+#include "competition.hpp"
 //#include <iostream>
 #endif
 
